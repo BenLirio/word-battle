@@ -110,4 +110,29 @@ export const mockServer = {
       throw new Error("Failed to update ELO");
     }
   },
+
+  async getTopPlayers(): Promise<
+    { rank: number; username: string; elo: number }[]
+  > {
+    try {
+      const users = getUsersFromCookies();
+      const elos = getElosFromCookies();
+
+      const players = Object.keys(users).map((uuid) => ({
+        username: users[uuid].username,
+        elo: elos[uuid],
+      }));
+
+      players.sort((a, b) => b.elo - a.elo);
+
+      return players.slice(0, 10).map((player, index) => ({
+        rank: index + 1,
+        username: player.username,
+        elo: player.elo,
+      }));
+    } catch (error: unknown) {
+      console.error("Fetch top players error:", error);
+      throw new Error("Failed to fetch top players");
+    }
+  },
 };

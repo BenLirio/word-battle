@@ -3,8 +3,8 @@ import { mockDatabase } from "../../server/database";
 import { mockServer } from "../../server/mockServer";
 import { GameInterfaceProps, User, BattleResult } from "../../types";
 import { Alert, AlertDescription } from "./alert";
+import ScoreBoard from "./ScoreBoard";
 
-// Game Interface Component
 export const GameInterface: React.FC<GameInterfaceProps> = ({
   uuid,
   onError,
@@ -107,6 +107,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
           <p>{battleResult.reason}</p>
         </div>
       )}
+      <ScoreBoard />
     </div>
   );
 };
