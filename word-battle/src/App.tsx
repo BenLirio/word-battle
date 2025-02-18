@@ -1,35 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import Cookies from "js-cookie";
+import { RegistrationForm } from "./components/ui/RegisterForm";
+import GameInterface from "./components/ui/GameInterface";
 
-function App() {
-  const [count, setCount] = useState(0)
+const WordBattleGame: React.FC = () => {
+  const [uuid, setUuid] = useState<string | null>(
+    Cookies.get("battleGameUUID") || null
+  );
+
+  const handleError = () => {
+    Cookies.remove("battleGameUUID");
+    setUuid(null);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="min-h-screen bg-gray-100 py-12">
+      {!uuid ? (
+        <RegistrationForm onRegister={setUuid} />
+      ) : (
+        <GameInterface uuid={uuid} onError={handleError} />
+      )}
+    </div>
+  );
+};
 
-export default App
+export default WordBattleGame;
