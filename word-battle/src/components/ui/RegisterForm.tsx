@@ -46,7 +46,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         username: formData.username,
         word: formData.word,
       });
-      console.log(`Result: ${result}`);
       Cookies.set("battleGameUUID", result.uuid);
       onRegister(result.uuid);
     } catch (error) {

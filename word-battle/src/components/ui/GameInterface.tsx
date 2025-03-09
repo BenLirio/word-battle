@@ -4,6 +4,26 @@ import { mockServer } from "../../server/mockServer";
 import { GameInterfaceProps, User, BattleResult } from "../../types";
 import { Alert, AlertDescription } from "./alert";
 import ScoreBoard from "./ScoreBoard";
+import {
+  GetUserRequest,
+  GetUserResponse,
+  WordBattleFunctionName,
+} from "word-battle-types";
+import axios from "axios";
+
+const PROTOCOL = "http";
+const DOMAIN = "localhost:3000";
+
+const getUser = async (req: GetUserRequest): Promise<GetUserResponse> => {
+  const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
+    funcName: WordBattleFunctionName.GET_USER,
+    data: req,
+  });
+  if (res.status !== 200) {
+    throw new Error("Failed to get user");
+  }
+  return res.data as GetUserResponse;
+};
 
 export const GameInterface: React.FC<GameInterfaceProps> = ({
   uuid,
@@ -20,7 +40,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
 
   const fetchUserData = async () => {
     try {
-      const data = await mockServer.getUser(uuid);
+      const data = await getUser({ uuid });
       setUserData(data);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
