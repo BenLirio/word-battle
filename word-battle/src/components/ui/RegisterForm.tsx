@@ -1,8 +1,29 @@
-import { useState } from "react";
-import { mockServer } from "../../server/mockServer";
-import { RegistrationFormProps, FormData } from "../../types";
-import { Alert, AlertDescription } from "./alert";
+import axios from "axios";
 import Cookies from "js-cookie";
+import { useState } from "react";
+import {
+  RegisterUserRequest,
+  RegisterUserResponse,
+  WordBattleFunctionName,
+} from "word-battle-types";
+import { FormData, RegistrationFormProps } from "../../types";
+import { Alert, AlertDescription } from "./alert";
+
+const PROTOCOL = "http";
+const DOMAIN = "localhost:3000";
+
+const registerUser = async (
+  req: RegisterUserRequest
+): Promise<RegisterUserResponse> => {
+  const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
+    funcName: WordBattleFunctionName.REGISTER_USER,
+    data: req,
+  });
+  if (res.status !== 200) {
+    throw new Error("Failed to register user");
+  }
+  return res.data as RegisterUserResponse;
+};
 
 // Registration Form Component
 export const RegistrationForm: React.FC<RegistrationFormProps> = ({
@@ -21,14 +42,13 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
     setIsLoading(true);
 
     try {
-      const result = await mockServer.registerUser(
-        formData.username,
-        formData.word
-      );
-      if (result.success) {
-        Cookies.set("battleGameUUID", result.uuid);
-        onRegister(result.uuid);
-      }
+      const result = await registerUser({
+        username: formData.username,
+        word: formData.word,
+      });
+      console.log(`Result: ${result}`);
+      Cookies.set("battleGameUUID", result.uuid);
+      onRegister(result.uuid);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
