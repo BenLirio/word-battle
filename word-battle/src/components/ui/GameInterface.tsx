@@ -11,6 +11,7 @@ import { GameInterfaceProps } from "../../types";
 import { Alert, AlertDescription } from "./alert";
 import { DOMAIN, PROTOCOL } from "../../constants";
 import { usePlayers } from "../../context/PlayersContext";
+import "./GameInterface.css";
 
 const getUser = async (req: GetUserRequest): Promise<GetUserResponse> => {
   const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
@@ -114,19 +115,29 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
       )}
 
       {battleResult && (
-        <div className="mt-4 p-4 bg-gray-100 rounded-md">
-          <h3 className="font-bold mb-2">Battle Result</h3>
-          <p className="mb-2">
-            {battleResult.userRecord.word} vs{" "}
-            {battleResult.otherUserRecord.word}
+        <div className="battle-result-card">
+          <h3 className="battle-result-title">Battle Result</h3>
+          <p className="battle-result-text">
+            <span className="battle-result-word">
+              {battleResult.userRecord.word}
+            </span>{" "}
+            vs{" "}
+            <span className="battle-result-word">
+              {battleResult.otherUserRecord.word}
+            </span>
           </p>
-          <p className="mb-2">Winner: {battleResult.winnerUserRecord.word}</p>
-          <p>{battleResult.message}</p>
-          <p className="mt-2">
+          <p className="battle-result-text">
+            Winner:{" "}
+            <span className="battle-result-word">
+              {battleResult.winnerUserRecord.word}
+            </span>
+          </p>
+          <p className="battle-result-text">{battleResult.message}</p>
+          <p className="battle-result-text">
             ELO Change:{" "}
             <span
-              className={`font-bold ${
-                battleResult.eloChange > 0 ? "text-green-600" : "text-red-600"
+              className={`battle-result-elo ${
+                battleResult.eloChange > 0 ? "elo-positive" : "elo-negative"
               }`}
             >
               {battleResult.eloChange > 0 ? "↑" : "↓"}{" "}

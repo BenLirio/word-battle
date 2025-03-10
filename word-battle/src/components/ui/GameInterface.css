@@ -1,0 +1,35 @@
+.battle-result-card {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background-color: #1e1e1e; /* Dark background color */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #f5f5f5; /* Light text color */
+}
+
+.battle-result-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.battle-result-text {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.battle-result-word {
+  font-weight: bold;
+}
+
+.battle-result-elo {
+  font-weight: bold;
+}
+
+.elo-positive {
+  color: #4caf50; /* Green color for positive ELO change */
+}
+
+.elo-negative {
+  color: #f44336; /* Red color for negative ELO change */
+}
