@@ -8,9 +8,7 @@ import {
 } from "word-battle-types";
 import { FormData, RegistrationFormProps } from "../../types";
 import { Alert, AlertDescription } from "./alert";
-
-const PROTOCOL = "http";
-const DOMAIN = "localhost:3000";
+import { DOMAIN, PROTOCOL } from "../../constants";
 
 const registerUser = async (
   req: RegisterUserRequest
@@ -46,8 +44,11 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         username: formData.username,
         word: formData.word,
       });
-      Cookies.set("battleGameUUID", result.uuid);
-      onRegister(result.uuid);
+      const {
+        userRecord: { uuid },
+      } = result;
+      Cookies.set("battleGameUUID", uuid);
+      onRegister(uuid);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

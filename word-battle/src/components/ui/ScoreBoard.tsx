@@ -1,20 +1,34 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { mockServer } from "../../server/mockServer";
+import {
+  ListTopUsersRequest,
+  ListTopUsersResponse,
+  UserRecord,
+  WordBattleFunctionName,
+} from "word-battle-types";
+import { DOMAIN, PROTOCOL } from "../../constants";
 
-interface Player {
-  rank: number;
-  username: string;
-  elo: number;
-}
+const listTopUsers = async (
+  req: ListTopUsersRequest
+): Promise<ListTopUsersResponse> => {
+  const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
+    funcName: WordBattleFunctionName.LIST_TOP_USERS,
+    data: req,
+  });
+  if (res.status !== 200) {
+    throw new Error("Failed to register user");
+  }
+  return res.data as ListTopUsersResponse;
+};
 
 const ScoreBoard: React.FC = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<UserRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTopPlayers = async () => {
       try {
-        const topPlayers = await mockServer.getTopPlayers();
+        const topPlayers = (await listTopUsers({})).userRecords;
         setPlayers(topPlayers);
       } catch (error) {
         console.error("Failed to fetch top players:", error);
@@ -34,9 +48,10 @@ const ScoreBoard: React.FC = () => {
     <div>
       <h2>Top 10 Players</h2>
       <ul>
-        {players.map((player) => (
-          <li key={player.rank}>
-            {player.rank}. {player.username} - ELO: {player.elo}
+        {players.map((player, idx) => (
+          <li key={idx}>
+            {idx + 1}. {Math.round(player.elo)} - {player.word} (
+            {player.username})
           </li>
         ))}
       </ul>

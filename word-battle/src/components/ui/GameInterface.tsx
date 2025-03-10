@@ -1,18 +1,16 @@
-import { useState, useEffect } from "react";
-import { mockDatabase } from "../../server/database";
-import { mockServer } from "../../server/mockServer";
-import { GameInterfaceProps, User, BattleResult } from "../../types";
-import { Alert, AlertDescription } from "./alert";
-import ScoreBoard from "./ScoreBoard";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import {
   GetUserRequest,
   GetUserResponse,
+  UserRecord,
   WordBattleFunctionName,
 } from "word-battle-types";
-import axios from "axios";
-
-const PROTOCOL = "http";
-const DOMAIN = "localhost:3000";
+import { BattleRequest, BattleResponse } from "word-battle-types/dist/battle";
+import { GameInterfaceProps } from "../../types";
+import { Alert, AlertDescription } from "./alert";
+import ScoreBoard from "./ScoreBoard";
+import { DOMAIN, PROTOCOL } from "../../constants";
 
 const getUser = async (req: GetUserRequest): Promise<GetUserResponse> => {
   const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
@@ -25,12 +23,23 @@ const getUser = async (req: GetUserRequest): Promise<GetUserResponse> => {
   return res.data as GetUserResponse;
 };
 
+const battle = async (req: BattleRequest): Promise<BattleResponse> => {
+  const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
+    funcName: WordBattleFunctionName.BATTLE,
+    data: req,
+  });
+  if (res.status !== 200) {
+    throw new Error("Failed to register user");
+  }
+  return res.data as BattleResponse;
+};
+
 export const GameInterface: React.FC<GameInterfaceProps> = ({
   uuid,
   onError,
 }) => {
-  const [userData, setUserData] = useState<User | null>(null);
-  const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
+  const [userData, setUserData] = useState<UserRecord | null>(null);
+  const [battleResult, setBattleResult] = useState<BattleResponse | null>(null);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -40,8 +49,8 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
 
   const fetchUserData = async () => {
     try {
-      const data = await getUser({ uuid });
-      setUserData(data);
+      const { userRecord } = await getUser({ uuid });
+      setUserData(userRecord);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
       onError();
@@ -56,26 +65,10 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
     setBattleResult(null);
 
     try {
-      // Select random opponent
-      const opponentWord =
-        mockDatabase.words[
-          Math.floor(Math.random() * mockDatabase.words.length)
-        ];
+      const battleResult = await battle({ uuid });
+      setBattleResult(battleResult);
 
-      // Perform battle
-      const result = await mockServer.performBattle(
-        userData.word,
-        opponentWord
-      );
-      setBattleResult({ ...result, opponentWord });
-
-      // Update ELO
-      const eloUpdate = await mockServer.updateElo(uuid, result);
-      if (eloUpdate.success) {
-        setUserData((prev) =>
-          prev ? { ...prev, elo: eloUpdate.newElo } : null
-        );
-      }
+      setUserData(battleResult.userRecord);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -94,7 +87,8 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
           Your battle word: <span className="font-bold">{userData.word}</span>
         </p>
         <p className="text-md">
-          Current ELO: <span className="font-bold">{userData.elo}</span>
+          Current ELO:{" "}
+          <span className="font-bold">{Math.round(userData.elo)}</span>
         </p>
       </div>
 
@@ -116,15 +110,22 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
         <div className="mt-4 p-4 bg-gray-100 rounded-md">
           <h3 className="font-bold mb-2">Battle Result</h3>
           <p className="mb-2">
-            {userData.word} vs {battleResult.opponentWord}
+            {battleResult.userRecord.word} vs{" "}
+            {battleResult.otherUserRecord.word}
           </p>
-          <p className="mb-2">
-            Winner:{" "}
-            {battleResult.winner === "player1"
-              ? userData.word
-              : battleResult.opponentWord}
+          <p className="mb-2">Winner: {battleResult.winnerUserRecord.word}</p>
+          <p>{battleResult.message}</p>
+          <p className="mt-2">
+            ELO Change:{" "}
+            <span
+              className={`font-bold ${
+                battleResult.eloChange > 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {battleResult.eloChange > 0 ? "↑" : "↓"}{" "}
+              {Math.round(Math.abs(battleResult.eloChange))}
+            </span>
           </p>
-          <p>{battleResult.reason}</p>
         </div>
       )}
       <ScoreBoard />
