@@ -9,8 +9,8 @@ import {
 import { BattleRequest, BattleResponse } from "word-battle-types/dist/battle";
 import { GameInterfaceProps } from "../../types";
 import { Alert, AlertDescription } from "./alert";
-import ScoreBoard from "./ScoreBoard";
 import { DOMAIN, PROTOCOL } from "../../constants";
+import { usePlayers } from "../../context/PlayersContext";
 
 const getUser = async (req: GetUserRequest): Promise<GetUserResponse> => {
   const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
@@ -38,6 +38,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
   uuid,
   onError,
 }) => {
+  const { updatePlayer } = usePlayers();
   const [userData, setUserData] = useState<UserRecord | null>(null);
   const [battleResult, setBattleResult] = useState<BattleResponse | null>(null);
   const [error, setError] = useState<string>("");
@@ -69,6 +70,12 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
       setBattleResult(battleResult);
 
       setUserData(battleResult.userRecord);
+      updatePlayer(battleResult.userRecord.uuid, {
+        elo: battleResult.userRecord.elo,
+      });
+      updatePlayer(battleResult.otherUserRecord.uuid, {
+        elo: battleResult.otherUserRecord.elo,
+      });
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -128,7 +135,6 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
           </p>
         </div>
       )}
-      <ScoreBoard />
     </div>
   );
 };
