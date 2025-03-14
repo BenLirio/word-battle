@@ -11,6 +11,7 @@ interface PlayersContextType {
   players: UserRecord[];
   setPlayers: React.Dispatch<React.SetStateAction<UserRecord[]>>;
   updatePlayer: (uuid: string, updatedPlayer: Partial<UserRecord>) => void;
+  addPlayer: (newPlayer: UserRecord) => void;
 }
 
 const PlayersContext = createContext<PlayersContextType | undefined>(undefined);
@@ -45,15 +46,27 @@ export const PlayersProvider: React.FC<PlayersProviderProps> = ({
   }, []);
 
   const updatePlayer = (uuid: string, updatedPlayer: Partial<UserRecord>) => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player) =>
+    setPlayers((prevPlayers) => {
+      const updatedPlayers = prevPlayers.map((player) =>
         player.uuid === uuid ? { ...player, ...updatedPlayer } : player
-      )
-    );
+      );
+      // Sort players by ELO in descending order
+      return updatedPlayers.sort((a, b) => b.elo - a.elo);
+    });
+  };
+
+  const addPlayer = (newPlayer: UserRecord) => {
+    setPlayers((prevPlayers) => {
+      const updatedPlayers = [...prevPlayers, newPlayer];
+      // Sort players by ELO in descending order
+      return updatedPlayers.sort((a, b) => b.elo - a.elo);
+    });
   };
 
   return (
-    <PlayersContext.Provider value={{ players, setPlayers, updatePlayer }}>
+    <PlayersContext.Provider
+      value={{ players, setPlayers, updatePlayer, addPlayer }}
+    >
       {children}
     </PlayersContext.Provider>
   );
