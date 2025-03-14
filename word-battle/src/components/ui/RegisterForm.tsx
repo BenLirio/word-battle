@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import {
@@ -50,7 +50,13 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       Cookies.set("battleGameUUID", uuid);
       onRegister(uuid);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      if (error instanceof AxiosError) {
+        console.log(error);
+        const errorMessage = error.response?.data?.error || "Unknown error";
+        setError(errorMessage);
+      } else {
+        setError("An unexpected error occurred");
+      }
     } finally {
       setIsLoading(false);
     }
