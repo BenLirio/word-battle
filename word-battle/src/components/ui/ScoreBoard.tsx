@@ -11,7 +11,7 @@ const ScoreBoard: React.FC = () => {
 
   return (
     <div className={styles.scoreboard}>
-      <h2>Top 10 Players</h2>
+      <h2>Player List</h2>
       <ul>
         {players.map((player, idx) => (
           <li key={idx}>
