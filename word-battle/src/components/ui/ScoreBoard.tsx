@@ -4,6 +4,8 @@ import styles from "./ScoreBoard.module.css";
 import { useUserData } from "../../context/UserDataContext";
 import { UserRecord } from "word-battle-types";
 
+const NUM_PLAYERS_BEFORE_AND_AFTER = 5;
+
 const ScoreBoard: React.FC = () => {
   const { players } = usePlayers();
   const { userData } = useUserData();
@@ -35,9 +37,15 @@ const ScoreBoard: React.FC = () => {
     setCurrentPlayerPosition(currentPlayerIndex + 1);
 
     // Determine the range of players to display
-    const startIndex = Math.max(0, currentPlayerIndex - 2);
+    const startIndex = Math.max(
+      0,
+      currentPlayerIndex - NUM_PLAYERS_BEFORE_AND_AFTER
+    );
     setStartIndex(startIndex);
-    const endIndex = Math.min(sortedPlayers.length, currentPlayerIndex + 3);
+    const endIndex = Math.min(
+      sortedPlayers.length,
+      currentPlayerIndex + 1 + NUM_PLAYERS_BEFORE_AND_AFTER
+    );
     setEndIndex(endIndex);
 
     // Slice the list of players to get the desired range
