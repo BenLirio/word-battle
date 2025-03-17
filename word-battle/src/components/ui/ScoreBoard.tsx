@@ -86,7 +86,7 @@ const ScoreBoard: React.FC = () => {
         {showAllPlayers ? (
           players.map((player, idx) => (
             <li key={idx}>
-              <span>{`${idx}. ${Math.round(player.elo)}`}</span>
+              <span>{`${idx + 1}. ${Math.round(player.elo)}`}</span>
               <span>{player.word}</span>
               <span>({player.username})</span>
             </li>
