@@ -4,6 +4,7 @@ import { RegistrationForm } from "./components/ui/RegisterForm";
 import GameInterface from "./components/ui/GameInterface";
 import { PlayersProvider } from "./context/PlayersContext";
 import ScoreBoard from "./components/ui/ScoreBoard";
+import { UserDataProvider } from "./context/UserDataContext";
 
 const WordBattleGame: React.FC = () => {
   const [uuid, setUuid] = useState<string | null>(
@@ -17,16 +18,18 @@ const WordBattleGame: React.FC = () => {
 
   return (
     <PlayersProvider>
-      <div className="min-h-screen bg-gray-100 py-12">
-        {!uuid ? (
-          <RegistrationForm onRegister={setUuid} />
-        ) : (
-          <>
-            <GameInterface uuid={uuid} onError={handleError} />
-            <ScoreBoard />
-          </>
-        )}
-      </div>
+      <UserDataProvider>
+        <div className="min-h-screen bg-gray-100 py-12">
+          {!uuid ? (
+            <RegistrationForm onRegister={setUuid} />
+          ) : (
+            <>
+              <GameInterface uuid={uuid} onError={handleError} />
+              <ScoreBoard />
+            </>
+          )}
+        </div>
+      </UserDataProvider>
     </PlayersProvider>
   );
 };

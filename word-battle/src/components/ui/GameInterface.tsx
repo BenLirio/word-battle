@@ -1,28 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import {
-  GetUserRequest,
-  GetUserResponse,
-  UserRecord,
-  WordBattleFunctionName,
-} from "word-battle-types";
 import { BattleRequest, BattleResponse } from "word-battle-types/dist/battle";
 import { GameInterfaceProps } from "../../types";
 import { Alert, AlertDescription } from "./alert";
 import { DOMAIN, PROTOCOL } from "../../constants";
 import { usePlayers } from "../../context/PlayersContext";
+import { useUserData } from "../../context/UserDataContext";
 import "./GameInterface.css";
-
-const getUser = async (req: GetUserRequest): Promise<GetUserResponse> => {
-  const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
-    funcName: WordBattleFunctionName.GET_USER,
-    data: req,
-  });
-  if (res.status !== 200) {
-    throw new Error("Failed to get user");
-  }
-  return res.data as GetUserResponse;
-};
+import { WordBattleFunctionName } from "word-battle-types";
 
 const battle = async (req: BattleRequest): Promise<BattleResponse> => {
   const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
@@ -40,37 +25,22 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
   onError,
 }) => {
   const { updatePlayer } = usePlayers();
-  const [userData, setUserData] = useState<UserRecord | null>(null);
+  const { userData, fetchUserData, error, isLoading } = useUserData();
   const [battleResult, setBattleResult] = useState<BattleResponse | null>(null);
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchUserData();
-  }, [uuid, onError]);
-
-  const fetchUserData = async () => {
-    try {
-      const { userRecord } = await getUser({ uuid });
-      setUserData(userRecord);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-      onError();
-    }
-  };
+    fetchUserData(uuid).catch(onError);
+  }, [uuid, onError, fetchUserData]);
 
   const handleBattle = async () => {
     if (!userData) return;
 
-    setError("");
-    setIsLoading(true);
     setBattleResult(null);
 
     try {
       const battleResult = await battle({ uuid });
       setBattleResult(battleResult);
 
-      setUserData(battleResult.userRecord);
       updatePlayer(battleResult.userRecord.uuid, {
         elo: battleResult.userRecord.elo,
       });
@@ -78,27 +48,27 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
         elo: battleResult.otherUserRecord.elo,
       });
     } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 
-  if (!userData) return <div>Loading user data...</div>;
+  if (isLoading) return <div>Loading user data...</div>;
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Word Battle Arena</h2>
-      <div className="mb-4">
-        <p className="text-lg">Welcome, {userData.username}!</p>
-        <p className="text-md">
-          Your battle word: <span className="font-bold">{userData.word}</span>
-        </p>
-        <p className="text-md">
-          Current ELO:{" "}
-          <span className="font-bold">{Math.round(userData.elo)}</span>
-        </p>
-      </div>
+      {userData && (
+        <div className="mb-4">
+          <p className="text-lg">Welcome, {userData.username}!</p>
+          <p className="text-md">
+            Your battle word: <span className="font-bold">{userData.word}</span>
+          </p>
+          <p className="text-md">
+            Current ELO:{" "}
+            <span className="font-bold">{Math.round(userData.elo)}</span>
+          </p>
+        </div>
+      )}
 
       <button
         onClick={handleBattle}
