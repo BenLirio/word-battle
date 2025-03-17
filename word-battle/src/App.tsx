@@ -17,20 +17,20 @@ const WordBattleGame: React.FC = () => {
   };
 
   return (
-    <PlayersProvider>
-      <UserDataProvider>
-        <div className="min-h-screen bg-gray-100 py-12">
-          {!uuid ? (
-            <RegistrationForm onRegister={setUuid} />
-          ) : (
-            <>
+    <UserDataProvider>
+      <div className="min-h-screen bg-gray-100 py-12">
+        {!uuid ? (
+          <RegistrationForm onRegister={setUuid} />
+        ) : (
+          <>
+            <PlayersProvider>
               <GameInterface uuid={uuid} onError={handleError} />
               <ScoreBoard />
-            </>
-          )}
-        </div>
-      </UserDataProvider>
-    </PlayersProvider>
+            </PlayersProvider>
+          </>
+        )}
+      </div>
+    </UserDataProvider>
   );
 };
 
