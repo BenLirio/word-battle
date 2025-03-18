@@ -34,3 +34,7 @@
 .scoreboard li span {
   font-weight: bold;
 }
+
+.highlight {
+  background-color: #00bfff; /* Deep Sky Blue */
+}

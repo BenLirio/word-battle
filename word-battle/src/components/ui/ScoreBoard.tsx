@@ -85,7 +85,10 @@ const ScoreBoard: React.FC = () => {
         </li>
         {showAllPlayers ? (
           players.map((player, idx) => (
-            <li key={idx}>
+            <li
+              key={idx}
+              className={player.uuid === userData?.uuid ? styles.highlight : ""}
+            >
               <span>{`${idx + 1}. ${Math.round(player.elo)}`}</span>
               <span>{player.word}</span>
               <span>({player.username})</span>
@@ -95,7 +98,12 @@ const ScoreBoard: React.FC = () => {
           <>
             {startIndex > 0 && <li>...</li>}
             {displayedPlayers.map((player, idx) => (
-              <li key={idx}>
+              <li
+                key={idx}
+                className={
+                  player.uuid === userData?.uuid ? styles.highlight : ""
+                }
+              >
                 <span>{Math.round(player.elo)}</span>
                 <span>{player.word}</span>
                 <span>({player.username})</span>
