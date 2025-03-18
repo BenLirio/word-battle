@@ -64,7 +64,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Register for Word Battles</h2>
+      <h2 className="text-2xl font-bold mb-4">Register for word-battle.com</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
