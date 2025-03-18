@@ -2,11 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding-top: 2em;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .logo {
@@ -43,4 +58,26 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.footer {
+  margin-top: 2em;
+  padding: 1em;
+  background-color: #333;
+  text-align: center;
+  font-size: 1em;
+  color: #f8f9fa;
+}
+
+.footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }
