@@ -33,8 +33,19 @@
 
 .scoreboard li span {
   font-weight: bold;
+  padding: 0 10px; /* Add padding to the left and right */
 }
 
 .highlight {
   background-color: #00bfff; /* Deep Sky Blue */
+}
+
+.leftAlign {
+  flex: 1;
+  text-align: left;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
 }

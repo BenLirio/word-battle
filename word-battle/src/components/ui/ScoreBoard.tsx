@@ -78,38 +78,42 @@ const ScoreBoard: React.FC = () => {
       </button>
       <h2>Player List</h2>
       <ul>
-        <li>
+        <li className={styles.listItem}>
           <span>Rank</span>
-          <span>Word</span>
+          <span className={styles.leftAlign}>Word</span>
           <span>Username</span>
         </li>
         {showAllPlayers ? (
           players.map((player, idx) => (
             <li
               key={idx}
-              className={player.uuid === userData?.uuid ? styles.highlight : ""}
+              className={`${styles.listItem} ${
+                player.uuid === userData?.uuid ? styles.highlight : ""
+              }`}
             >
               <span>{`${idx + 1}. ${Math.round(player.elo)}`}</span>
-              <span>{player.word}</span>
+              <span className={styles.leftAlign}>{player.word}</span>
               <span>({player.username})</span>
             </li>
           ))
         ) : (
           <>
-            {startIndex > 0 && <li>...</li>}
+            {startIndex > 0 && <li className={styles.listItem}>...</li>}
             {displayedPlayers.map((player, idx) => (
               <li
                 key={idx}
-                className={
+                className={`${styles.listItem} ${
                   player.uuid === userData?.uuid ? styles.highlight : ""
-                }
+                }`}
               >
                 <span>{Math.round(player.elo)}</span>
-                <span>{player.word}</span>
+                <span className={styles.leftAlign}>{player.word}</span>
                 <span>({player.username})</span>
               </li>
             ))}
-            {endIndex < players.length && <li>...</li>}
+            {endIndex < players.length && (
+              <li className={styles.listItem}>...</li>
+            )}
           </>
         )}
       </ul>
