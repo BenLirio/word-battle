@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie"; // Add this import
 import { BattleRequest, BattleResponse } from "word-battle-types/dist/battle";
 import { GameInterfaceProps } from "../../types";
 import { Alert, AlertDescription } from "./alert";
@@ -52,10 +53,21 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
     }
   };
 
+  const handleTryAnotherWord = () => {
+    Cookies.remove("battleGameUUID");
+    window.location.reload();
+  };
+
   if (isLoading) return <div>Loading user data...</div>;
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <button
+        onClick={handleTryAnotherWord}
+        className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 mb-4"
+      >
+        Restart (Try another word)
+      </button>
       <h2 className="text-2xl font-bold mb-4">Word Battle Arena</h2>
       {userData && (
         <div className="mb-4">
