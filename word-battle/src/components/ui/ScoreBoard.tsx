@@ -3,6 +3,7 @@ import { usePlayers } from "../../context/PlayersContext";
 import styles from "./ScoreBoard.module.css";
 import { useUserData } from "../../context/UserDataContext";
 import { UserRecord } from "word-battle-types";
+import "./ScoreBoard.module.css";
 
 const NUM_PLAYERS_BEFORE_AND_AFTER = 5;
 
@@ -80,7 +81,7 @@ const ScoreBoard: React.FC = () => {
       <ul>
         <li className={styles.listItem}>
           <span>Rank</span>
-          <span className={styles.leftAlign}>Word</span>
+          <span>Word</span>
           <span>Username</span>
         </li>
         {showAllPlayers ? (
@@ -91,8 +92,8 @@ const ScoreBoard: React.FC = () => {
                 player.uuid === userData?.uuid ? styles.highlight : ""
               }`}
             >
-              <span>{`${idx + 1}. ${Math.round(player.elo)}`}</span>
-              <span className={styles.leftAlign}>{player.word}</span>
+              <span>{`#${idx + 1} (${Math.round(player.elo)})`}</span>
+              <span>{player.word}</span>
               <span>({player.username})</span>
             </li>
           ))
@@ -107,7 +108,7 @@ const ScoreBoard: React.FC = () => {
                 }`}
               >
                 <span>{Math.round(player.elo)}</span>
-                <span className={styles.leftAlign}>{player.word}</span>
+                <span>{player.word}</span>
                 <span>({player.username})</span>
               </li>
             ))}

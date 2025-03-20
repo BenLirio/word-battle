@@ -4,7 +4,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <p>
-        Found a bug or have a feature request?{" "}
+        Found a bug or have a feature request? Join our{" "}
         <a
           href="https://discord.gg/F69uzFtgpT"
           target="_blank"

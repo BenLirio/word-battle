@@ -68,7 +68,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
       >
         Restart (Try another word)
       </button>
-      <h2 className="text-2xl font-bold mb-4">Word Battle Arena</h2>
+      <h2 className="text-2xl font-bold mb-4">word-battle.com</h2>
       {userData && (
         <div className="mb-4">
           <p className="text-lg">Welcome, {userData.username}!</p>
@@ -76,7 +76,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
             Your battle word: <span className="font-bold">{userData.word}</span>
           </p>
           <p className="text-md">
-            Current ELO:{" "}
+            Current Rank:{" "}
             <span className="font-bold">{Math.round(userData.elo)}</span>
           </p>
         </div>
