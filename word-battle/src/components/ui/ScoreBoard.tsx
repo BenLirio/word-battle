@@ -23,7 +23,7 @@ const ScoreBoard: React.FC = () => {
       return;
     }
 
-    // Sort players by ELO
+    // Sort players by Rank
     const sortedPlayers = [...players].sort((a, b) => b.elo - a.elo);
 
     // Find the index of the current player in the sorted list

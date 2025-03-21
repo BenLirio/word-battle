@@ -39,7 +39,7 @@ export const mockServer = {
       const elos = getElosFromCookies();
 
       users[uuid] = { username, word };
-      elos[uuid] = 1200; // Starting ELO
+      elos[uuid] = 1200; // Starting Rank
 
       setUsersToCookies(users);
       setElosToCookies(elos);
@@ -106,8 +106,8 @@ export const mockServer = {
 
       return { success: true, newElo: elos[uuid] };
     } catch (error: unknown) {
-      console.error("ELO update error:", error);
-      throw new Error("Failed to update ELO");
+      console.error("Rank update error:", error);
+      throw new Error("Failed to update Rank");
     }
   },
 

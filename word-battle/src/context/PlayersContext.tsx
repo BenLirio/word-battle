@@ -50,7 +50,7 @@ export const PlayersProvider: React.FC<PlayersProviderProps> = ({
       const updatedPlayers = prevPlayers.map((player) =>
         player.uuid === uuid ? { ...player, ...updatedPlayer } : player
       );
-      // Sort players by ELO in descending order
+      // Sort players by Rank in descending order
       return updatedPlayers.sort((a, b) => b.elo - a.elo);
     });
   };
@@ -58,7 +58,7 @@ export const PlayersProvider: React.FC<PlayersProviderProps> = ({
   const addPlayer = (newPlayer: UserRecord) => {
     setPlayers((prevPlayers) => {
       const updatedPlayers = [...prevPlayers, newPlayer];
-      // Sort players by ELO in descending order
+      // Sort players by Rank in descending order
       return updatedPlayers.sort((a, b) => b.elo - a.elo);
     });
   };

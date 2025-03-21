@@ -26,8 +26,14 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
   onError,
 }) => {
   const { updatePlayer } = usePlayers();
-  const { userData, fetchUserData, error, isLoading } = useUserData();
+  const {
+    userData,
+    fetchUserData,
+    error,
+    isLoading: isUserDataLoading,
+  } = useUserData();
   const [battleResult, setBattleResult] = useState<BattleResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // Add local isLoading state
 
   useEffect(() => {
     fetchUserData(uuid).catch(onError);
@@ -37,6 +43,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
     if (!userData) return;
 
     setBattleResult(null);
+    setIsLoading(true); // Set loading state to true
 
     try {
       const battleResult = await battle({ uuid });
@@ -50,6 +57,8 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false); // Set loading state to false
     }
   };
 
@@ -58,7 +67,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
     window.location.reload();
   };
 
-  if (isLoading) return <div>Loading user data...</div>;
+  if (isUserDataLoading) return <div>Loading user data...</div>; // Use isUserDataLoading for initial data load
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -84,10 +93,10 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
 
       <button
         onClick={handleBattle}
-        disabled={isLoading}
+        disabled={isLoading || isUserDataLoading} // Disable button if either loading state is true
         className="w-full bg-green-600 text-white p-2 rounded-md hover:bg-green-700 disabled:opacity-50 mb-4"
       >
-        {isLoading ? "Battling..." : "Start Battle"}
+        {isLoading || isUserDataLoading ? "Battling..." : "Start Battle"}
       </button>
 
       {error && (
@@ -109,14 +118,16 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
             </span>
           </p>
           <p className="battle-result-text">
+            <em>{battleResult.message}</em>
+          </p>
+          <p className="battle-result-text">
             Winner:{" "}
             <span className="battle-result-word">
               {battleResult.winnerUserRecord.word}
             </span>
           </p>
-          <p className="battle-result-text">{battleResult.message}</p>
           <p className="battle-result-text">
-            ELO Change:{" "}
+            Rank Change:{" "}
             <span
               className={`battle-result-elo ${
                 battleResult.eloChange > 0 ? "elo-positive" : "elo-negative"

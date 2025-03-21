@@ -27,9 +27,9 @@
 }
 
 .elo-positive {
-  color: #4caf50; /* Green color for positive ELO change */
+  color: #4caf50; /* Green color for positive Rank change */
 }
 
 .elo-negative {
-  color: #f44336; /* Red color for negative ELO change */
+  color: #f44336; /* Red color for negative Rank change */
 }
