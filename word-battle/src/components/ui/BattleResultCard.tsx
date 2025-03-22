@@ -1,6 +1,6 @@
 import React from "react";
 import { BattleResponse } from "word-battle-types/dist/battle";
-import { FaShareAlt } from "react-icons/fa"; // Import a share icon from react-icons
+import { FaShare, FaShareSquare } from "react-icons/fa"; // Import an arrow icon from react-icons
 
 interface BattleResultCardProps {
   battleResult: BattleResponse;
@@ -60,7 +60,7 @@ const BattleResultCard: React.FC<BattleResultCardProps> = ({
         </span>
       </p>
       <p className="battle-result-text">
-        <FaShareAlt onClick={handleShare} style={{ cursor: "pointer" }} />
+        <FaShareSquare onClick={handleShare} style={{ cursor: "pointer" }} />
       </p>
     </div>
   );
