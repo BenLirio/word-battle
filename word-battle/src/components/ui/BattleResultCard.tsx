@@ -10,7 +10,7 @@ const BattleResultCard: React.FC<BattleResultCardProps> = ({
   battleResult,
 }) => {
   const battleUuid = `${battleResult.userRecord.uuid}:${battleResult.timestamp}`;
-  const shareUrl = `${window.location.origin}/battle-details?battleUuid=${battleUuid}`;
+  const shareUrl = `${window.location.origin}?battleUuid=${battleUuid}`;
 
   const handleShare = async () => {
     if (navigator.share) {
