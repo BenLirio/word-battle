@@ -9,6 +9,11 @@ import {
 import { FormData, RegistrationFormProps } from "../../types";
 import { Alert, AlertDescription } from "./alert";
 import { DOMAIN, PROTOCOL } from "../../constants";
+import styles from "./Register.module.css";
+
+const DESCRIPTION = `
+Submit words, challenge others, and watch AI pick winners in matchups like "Would lightning beat rock?" Jump in and see how your picks rank!
+  `;
 
 const registerUser = async (
   req: RegisterUserRequest
@@ -63,16 +68,17 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Register for word-battle.com</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className={styles.container}>
+      <h2 className={styles.title}>word-battle.com</h2>
+      <p className={styles.description}>
+        <em>{DESCRIPTION}</em>
+      </p>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Username
-          </label>
+          <label className={styles.label}>Username</label>
           <input
             type="text"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
+            className={styles.input}
             value={formData.username}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, username: e.target.value }))
@@ -81,12 +87,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Battle Word
-          </label>
+          <label className={styles.label}>Battle Word</label>
           <input
             type="text"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"
+            className={styles.input}
             value={formData.word}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, word: e.target.value }))
@@ -99,11 +103,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={isLoading} className={styles.button}>
           {isLoading ? "Registering..." : "Register"}
         </button>
       </form>
