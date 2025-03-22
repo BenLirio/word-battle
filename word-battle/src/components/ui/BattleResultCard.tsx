@@ -1,6 +1,5 @@
 import React from "react";
 import { BattleResponse } from "word-battle-types/dist/battle";
-import { Link } from "react-router-dom"; // Assuming you're using react-router for navigation
 import { FaShareAlt } from "react-icons/fa"; // Import a share icon from react-icons
 
 interface BattleResultCardProps {
