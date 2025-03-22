@@ -9,6 +9,7 @@ import { usePlayers } from "../../context/PlayersContext";
 import { useUserData } from "../../context/UserDataContext";
 import "./GameInterface.css";
 import { WordBattleFunctionName } from "word-battle-types";
+import BattleResultCard from "./BattleResultCard"; // Add this import
 
 const battle = async (req: BattleRequest): Promise<BattleResponse> => {
   const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
@@ -105,40 +106,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
         </Alert>
       )}
 
-      {battleResult && (
-        <div className="battle-result-card">
-          <h3 className="battle-result-title">Battle Result</h3>
-          <p className="battle-result-text">
-            <span className="battle-result-word">
-              {battleResult.userRecord.word}
-            </span>{" "}
-            vs{" "}
-            <span className="battle-result-word">
-              {battleResult.otherUserRecord.word}
-            </span>
-          </p>
-          <p className="battle-result-text">
-            <em>{battleResult.message}</em>
-          </p>
-          <p className="battle-result-text">
-            Winner:{" "}
-            <span className="battle-result-word">
-              {battleResult.winnerUserRecord.word}
-            </span>
-          </p>
-          <p className="battle-result-text">
-            Rank Change:{" "}
-            <span
-              className={`battle-result-elo ${
-                battleResult.eloChange > 0 ? "elo-positive" : "elo-negative"
-              }`}
-            >
-              {battleResult.eloChange > 0 ? "↑" : "↓"}{" "}
-              {Math.round(Math.abs(battleResult.eloChange))}
-            </span>
-          </p>
-        </div>
-      )}
+      {battleResult && <BattleResultCard battleResult={battleResult} />}
     </div>
   );
 };
