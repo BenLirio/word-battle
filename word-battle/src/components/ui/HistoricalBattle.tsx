@@ -65,7 +65,9 @@ const HistoricalBattle: React.FC<HistoricalBattleProps> = ({
   return (
     <div>
       <button onClick={handleBackClick}>Back</button>
-      {battleResult && <BattleResultCard battleResult={battleResult} />}
+      {battleResult && (
+        <BattleResultCard battleResult={{ ...battleResult, timestamp }} />
+      )}
     </div>
   );
 };

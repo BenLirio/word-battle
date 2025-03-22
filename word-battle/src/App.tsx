@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Cookies from "js-cookie";
 import { RegistrationForm } from "./components/ui/RegisterForm";
 import { useSearchParams } from "react-router-dom";
@@ -20,12 +20,6 @@ const WordBattleGame: React.FC = () => {
     Cookies.remove("battleGameUUID");
     setUuid(null);
   };
-
-  useEffect(() => {
-    if (battleUuid) {
-      setUuid(battleUuid);
-    }
-  }, [battleUuid]);
 
   const parseBattleUuid = (battleUuid: string | null) => {
     if (!battleUuid) return { uuid: null, timestamp: null };
