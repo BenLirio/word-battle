@@ -1,6 +1,6 @@
 import React from "react";
 import { BattleResponse } from "word-battle-types/dist/battle";
-import { FaShare, FaShareSquare } from "react-icons/fa"; // Import an arrow icon from react-icons
+import { FaShareSquare } from "react-icons/fa"; // Import an arrow icon from react-icons
 
 interface BattleResultCardProps {
   battleResult: BattleResponse;
