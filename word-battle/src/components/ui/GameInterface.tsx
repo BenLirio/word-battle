@@ -30,6 +30,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
   const {
     userData,
     fetchUserData,
+    setUserData,
     error,
     isLoading: isUserDataLoading,
   } = useUserData();
@@ -48,6 +49,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
 
     try {
       const battleResult = await battle({ uuid });
+      setUserData(battleResult.userRecord);
       setBattleResult(battleResult);
 
       updatePlayer(battleResult.userRecord.uuid, {

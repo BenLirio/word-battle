@@ -11,6 +11,7 @@ import { DOMAIN, PROTOCOL } from "../constants";
 interface UserDataContextType {
   userData: UserRecord | null;
   fetchUserData: (uuid: string) => Promise<void>;
+  setUserData: React.Dispatch<React.SetStateAction<UserRecord | null>>;
   error: string;
   isLoading: boolean;
 }
@@ -52,7 +53,7 @@ export const UserDataProvider: React.FC<UserDataProviderProps> = ({
 
   return (
     <UserDataContext.Provider
-      value={{ userData, fetchUserData, error, isLoading }}
+      value={{ userData, fetchUserData, setUserData, error, isLoading }}
     >
       {children}
     </UserDataContext.Provider>
