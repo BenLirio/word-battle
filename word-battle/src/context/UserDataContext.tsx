@@ -7,6 +7,7 @@ import {
   WordBattleFunctionName,
 } from "word-battle-types";
 import { DOMAIN, PROTOCOL } from "../constants";
+import { useLeaderboard } from "./LeaderboardContext";
 
 interface UserDataContextType {
   userData: UserRecord | null;
@@ -30,26 +31,33 @@ export const UserDataProvider: React.FC<UserDataProviderProps> = ({
   const [userData, setUserData] = useState<UserRecord | null>(null);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { setLeaderboard } = useLeaderboard();
 
-  const fetchUserData = useCallback(async (uuid: string) => {
-    setIsLoading(true);
-    setError("");
-    try {
-      const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
-        funcName: WordBattleFunctionName.GET_USER,
-        data: { uuid } as GetUserRequest,
-      });
-      if (res.status !== 200) {
-        throw new Error("Failed to get user");
+  const fetchUserData = useCallback(
+    async (uuid: string) => {
+      setIsLoading(true);
+      setError("");
+      try {
+        const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
+          funcName: WordBattleFunctionName.GET_USER,
+          data: { uuid } as GetUserRequest,
+        });
+        if (res.status !== 200) {
+          throw new Error("Failed to get user");
+        }
+        const { userRecord } = res.data as GetUserResponse;
+        setUserData(userRecord);
+        setTimeout(() => {
+          setLeaderboard(userRecord.leaderboard);
+        }, 2000); // Wait for 2 seconds before setting the leaderboard
+      } catch (error) {
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
+        setIsLoading(false);
       }
-      const { userRecord } = res.data as GetUserResponse;
-      setUserData(userRecord);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [setLeaderboard]
+  );
 
   return (
     <UserDataContext.Provider
