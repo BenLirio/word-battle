@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "./alert";
 import { DOMAIN, PROTOCOL } from "../../constants";
 import styles from "./Register.module.css";
 import { usePlayers } from "../../context/PlayersContext";
+import { useLeaderboard } from "../../context/LeaderboardContext";
 
 const DESCRIPTION = `
 Submit words, challenge others, and watch AI pick winners in matchups like "Would lightning beat rock?" Jump in and see how your picks rank!
@@ -40,6 +41,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { addPlayer } = usePlayers();
+  const { leaderboard, setLeaderboard } = useLeaderboard();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +52,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       const result = await registerUser({
         username: formData.username,
         word: formData.word,
+        leaderboard, // Pass the leaderboard value
       });
       const {
         userRecord: { uuid },
@@ -100,6 +103,21 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
             }
             required
           />
+        </div>
+        <div>
+          <label className={styles.label}>Leaderboard</label>
+          <select
+            className={styles.input}
+            value={leaderboard || ""}
+            onChange={(e) =>
+              setLeaderboard(
+                e.target.value === "default" ? undefined : e.target.value
+              )
+            }
+          >
+            <option value="default">Default</option>
+            <option value="season1">Season 1</option>
+          </select>
         </div>
         {error && (
           <Alert variant="destructive">

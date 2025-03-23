@@ -8,6 +8,7 @@ import ScoreBoard from "./components/ui/ScoreBoard";
 import { UserDataProvider } from "./context/UserDataContext";
 import Footer from "./components/ui/Footer";
 import HistoricalBattle from "./components/ui/HistoricalBattle";
+import { LeaderboardProvider } from "./context/LeaderboardContext";
 
 const WordBattleGame: React.FC = () => {
   const [uuid, setUuid] = useState<string | null>(
@@ -30,32 +31,34 @@ const WordBattleGame: React.FC = () => {
   const { uuid: parsedUuid, timestamp } = parseBattleUuid(battleUuid);
 
   return (
-    <UserDataProvider>
-      <PlayersProvider>
-        <div className="min-h-screen bg-gray-100 py-12 flex flex-col">
-          <div className="main-content">
-            {parsedUuid ? (
-              <HistoricalBattle
-                uuid={parsedUuid}
-                timestamp={timestamp as number}
-              />
-            ) : !uuid ? (
-              <>
-                <RegistrationForm onRegister={setUuid} />
-                <ScoreBoard />
-                <Footer />
-              </>
-            ) : (
-              <>
-                <GameInterface uuid={uuid} onError={handleError} />
-                <ScoreBoard />
-                <Footer />
-              </>
-            )}
+    <LeaderboardProvider>
+      <UserDataProvider>
+        <PlayersProvider>
+          <div className="min-h-screen bg-gray-100 py-12 flex flex-col">
+            <div className="main-content">
+              {parsedUuid ? (
+                <HistoricalBattle
+                  uuid={parsedUuid}
+                  timestamp={timestamp as number}
+                />
+              ) : !uuid ? (
+                <>
+                  <RegistrationForm onRegister={setUuid} />
+                  <ScoreBoard />
+                  <Footer />
+                </>
+              ) : (
+                <>
+                  <GameInterface uuid={uuid} onError={handleError} />
+                  <ScoreBoard />
+                  <Footer />
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      </PlayersProvider>
-    </UserDataProvider>
+        </PlayersProvider>
+      </UserDataProvider>
+    </LeaderboardProvider>
   );
 };
 

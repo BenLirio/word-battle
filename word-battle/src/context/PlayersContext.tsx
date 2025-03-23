@@ -6,6 +6,7 @@ import {
 } from "word-battle-types";
 import axios from "axios";
 import { DOMAIN, PROTOCOL } from "../constants";
+import { useLeaderboard } from "./LeaderboardContext";
 
 interface PlayersContextType {
   players: UserRecord[];
@@ -24,13 +25,14 @@ export const PlayersProvider: React.FC<PlayersProviderProps> = ({
   children,
 }) => {
   const [players, setPlayers] = useState<UserRecord[]>([]);
+  const { leaderboard } = useLeaderboard();
 
   useEffect(() => {
     const fetchTopPlayers = async () => {
       try {
         const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
           funcName: WordBattleFunctionName.LIST_TOP_USERS,
-          data: {} as ListTopUsersRequest,
+          data: { leaderboard } as ListTopUsersRequest,
         });
         if (res.status === 200) {
           setPlayers(res.data.userRecords);
@@ -43,7 +45,7 @@ export const PlayersProvider: React.FC<PlayersProviderProps> = ({
     };
 
     fetchTopPlayers();
-  }, []);
+  }, [leaderboard]);
 
   const updatePlayer = (uuid: string, updatedPlayer: Partial<UserRecord>) => {
     setPlayers((prevPlayers) => {
