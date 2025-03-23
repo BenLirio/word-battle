@@ -10,6 +10,7 @@ import { FormData, RegistrationFormProps } from "../../types";
 import { Alert, AlertDescription } from "./alert";
 import { DOMAIN, PROTOCOL } from "../../constants";
 import styles from "./Register.module.css";
+import { usePlayers } from "../../context/PlayersContext";
 
 const DESCRIPTION = `
 Submit words, challenge others, and watch AI pick winners in matchups like "Would lightning beat rock?" Jump in and see how your picks rank!
@@ -38,6 +39,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   });
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { addPlayer } = usePlayers();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +55,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         userRecord: { uuid },
       } = result;
       Cookies.set("battleGameUUID", uuid);
+      addPlayer(result.userRecord);
       onRegister(uuid);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -104,7 +107,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           </Alert>
         )}
         <button type="submit" disabled={isLoading} className={styles.button}>
-          {isLoading ? "Registering..." : "Register"}
+          {isLoading ? "Loading..." : "Play"}
         </button>
       </form>
     </div>

@@ -31,26 +31,30 @@ const WordBattleGame: React.FC = () => {
 
   return (
     <UserDataProvider>
-      <div className="min-h-screen bg-gray-100 py-12 flex flex-col">
-        <div className="main-content">
-          {parsedUuid ? (
-            <HistoricalBattle
-              uuid={parsedUuid}
-              timestamp={timestamp as number}
-            />
-          ) : !uuid ? (
-            <RegistrationForm onRegister={setUuid} />
-          ) : (
-            <>
-              <PlayersProvider>
+      <PlayersProvider>
+        <div className="min-h-screen bg-gray-100 py-12 flex flex-col">
+          <div className="main-content">
+            {parsedUuid ? (
+              <HistoricalBattle
+                uuid={parsedUuid}
+                timestamp={timestamp as number}
+              />
+            ) : !uuid ? (
+              <>
+                <RegistrationForm onRegister={setUuid} />
+                <ScoreBoard />
+                <Footer />
+              </>
+            ) : (
+              <>
                 <GameInterface uuid={uuid} onError={handleError} />
                 <ScoreBoard />
                 <Footer />
-              </PlayersProvider>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      </PlayersProvider>
     </UserDataProvider>
   );
 };
