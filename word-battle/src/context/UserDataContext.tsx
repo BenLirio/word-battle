@@ -47,9 +47,7 @@ export const UserDataProvider: React.FC<UserDataProviderProps> = ({
         }
         const { userRecord } = res.data as GetUserResponse;
         setUserData(userRecord);
-        setTimeout(() => {
-          setLeaderboard(userRecord.leaderboard);
-        }, 2000); // Wait for 2 seconds before setting the leaderboard
+        setLeaderboard(userRecord.leaderboard);
       } catch (error) {
         setError(error instanceof Error ? error.message : "An error occurred");
       } finally {

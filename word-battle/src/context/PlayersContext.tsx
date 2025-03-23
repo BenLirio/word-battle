@@ -28,23 +28,36 @@ export const PlayersProvider: React.FC<PlayersProviderProps> = ({
   const { leaderboard } = useLeaderboard();
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchTopPlayers = async () => {
       try {
-        const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
-          funcName: WordBattleFunctionName.LIST_TOP_USERS,
-          data: { leaderboard } as ListTopUsersRequest,
-        });
+        const res = await axios.post(
+          `${PROTOCOL}://${DOMAIN}/dev/app`,
+          {
+            funcName: WordBattleFunctionName.LIST_TOP_USERS,
+            data: { leaderboard } as ListTopUsersRequest,
+          },
+          { signal: controller.signal }
+        );
         if (res.status === 200) {
           setPlayers(res.data.userRecords);
         } else {
           throw new Error("Failed to fetch top players");
         }
       } catch (error) {
-        console.error("Failed to fetch top players:", error);
+        if (axios.isCancel(error)) {
+          console.log("Request canceled:", error.message);
+        } else {
+          console.error("Failed to fetch top players:", error);
+        }
       }
     };
 
     fetchTopPlayers();
+
+    return () => {
+      controller.abort();
+    };
   }, [leaderboard]);
 
   const updatePlayer = (uuid: string, updatedPlayer: Partial<UserRecord>) => {
