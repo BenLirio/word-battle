@@ -131,7 +131,7 @@ const ScoreBoard: React.FC = () => {
           {showAllPlayers ? "Show Nearby Players" : "Show All Players"}
         </button>
       )}
-      <h2>Player List</h2>
+      {onlyScoreboard ? <h2>Top 10 Players</h2> : <h2>Player List</h2>}
       <PlayerList
         players={players}
         userData={userData}
