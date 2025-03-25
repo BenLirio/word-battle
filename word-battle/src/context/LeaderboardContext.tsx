@@ -16,7 +16,7 @@ interface LeaderboardProviderProps {
 export const LeaderboardProvider: React.FC<LeaderboardProviderProps> = ({
   children,
 }) => {
-  const [leaderboard, setLeaderboard] = useState<string | undefined>(undefined);
+  const [leaderboard, setLeaderboard] = useState<string | undefined>("season1");
 
   return (
     <LeaderboardContext.Provider value={{ leaderboard, setLeaderboard }}>
