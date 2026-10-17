@@ -9,10 +9,11 @@ import { UserDataProvider } from "./context/UserDataContext";
 import Footer from "./components/ui/Footer";
 import HistoricalBattle from "./components/ui/HistoricalBattle";
 import { LeaderboardProvider } from "./context/LeaderboardContext";
+import { TranslationProvider } from "./context/TranslationContext";
 
 const WordBattleGame: React.FC = () => {
   const [uuid, setUuid] = useState<string | null>(
-    Cookies.get("battleGameUUID") || null
+    Cookies.get("battleGameUUID") || null,
   );
   const [searchParams] = useSearchParams();
   const battleUuid = searchParams.get("battleUuid");
@@ -31,34 +32,36 @@ const WordBattleGame: React.FC = () => {
   const { uuid: parsedUuid, timestamp } = parseBattleUuid(battleUuid);
 
   return (
-    <LeaderboardProvider>
-      <UserDataProvider>
-        <PlayersProvider>
-          <div className="min-h-screen bg-gray-100 py-12 flex flex-col">
-            <div className="main-content">
-              {parsedUuid ? (
-                <HistoricalBattle
-                  uuid={parsedUuid}
-                  timestamp={timestamp as number}
-                />
-              ) : !uuid ? (
-                <>
-                  <RegistrationForm onRegister={setUuid} />
-                  <ScoreBoard />
-                  <Footer />
-                </>
-              ) : (
-                <>
-                  <GameInterface uuid={uuid} onError={handleError} />
-                  <ScoreBoard />
-                  <Footer />
-                </>
-              )}
+    <TranslationProvider>
+      <LeaderboardProvider>
+        <UserDataProvider>
+          <PlayersProvider>
+            <div className="min-h-screen bg-gray-100 py-12 flex flex-col">
+              <div className="main-content">
+                {parsedUuid ? (
+                  <HistoricalBattle
+                    uuid={parsedUuid}
+                    timestamp={timestamp as number}
+                  />
+                ) : !uuid ? (
+                  <>
+                    <RegistrationForm onRegister={setUuid} />
+                    <ScoreBoard />
+                    <Footer />
+                  </>
+                ) : (
+                  <>
+                    <GameInterface uuid={uuid} onError={handleError} />
+                    <ScoreBoard />
+                    <Footer />
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        </PlayersProvider>
-      </UserDataProvider>
-    </LeaderboardProvider>
+          </PlayersProvider>
+        </UserDataProvider>
+      </LeaderboardProvider>
+    </TranslationProvider>
   );
 };
 

@@ -3,6 +3,7 @@ import { usePlayers } from "../../context/PlayersContext";
 import { useUserData } from "../../context/UserDataContext";
 import { UserRecord } from "word-battle-types";
 import styles from "./ScoreBoard.module.css";
+import TranslatedWord from "./TranslatedWord";
 
 const NUM_PLAYERS_BEFORE_AND_AFTER = 5;
 
@@ -37,7 +38,9 @@ const PlayerList: React.FC<{
             }`}
           >
             <span>{`#${idx + 1} (${Math.round(player.elo)})`}</span>
-            <span>{player.word}</span>
+            <span>
+              <TranslatedWord record={player} />
+            </span>
             <span>({player.username})</span>
           </li>
         ))
@@ -52,7 +55,9 @@ const PlayerList: React.FC<{
               }`}
             >
               <span>{Math.round(player.elo)}</span>
-              <span>{player.word}</span>
+              <span>
+                <TranslatedWord record={player} />
+              </span>
               <span>({player.username})</span>
             </li>
           ))}
@@ -78,15 +83,15 @@ const ScoreBoard: React.FC = () => {
 
   const calculateIndices = (
     currentPlayerIndex: number,
-    totalPlayers: number
+    totalPlayers: number,
   ) => {
     const startIndex = Math.max(
       0,
-      currentPlayerIndex - NUM_PLAYERS_BEFORE_AND_AFTER
+      currentPlayerIndex - NUM_PLAYERS_BEFORE_AND_AFTER,
     );
     const endIndex = Math.min(
       totalPlayers,
-      currentPlayerIndex + 1 + NUM_PLAYERS_BEFORE_AND_AFTER
+      currentPlayerIndex + 1 + NUM_PLAYERS_BEFORE_AND_AFTER,
     );
     return { startIndex, endIndex };
   };
@@ -97,7 +102,7 @@ const ScoreBoard: React.FC = () => {
 
     const sortedPlayers = [...players].sort((a, b) => b.elo - a.elo);
     const currentPlayerIndex = sortedPlayers.findIndex(
-      ({ uuid }) => uuid === userData?.uuid
+      ({ uuid }) => uuid === userData?.uuid,
     );
     if (currentPlayerIndex === -1) return;
 
@@ -105,7 +110,7 @@ const ScoreBoard: React.FC = () => {
 
     const { startIndex, endIndex } = calculateIndices(
       currentPlayerIndex,
-      sortedPlayers.length
+      sortedPlayers.length,
     );
     setStartIndex(startIndex);
     setEndIndex(endIndex);

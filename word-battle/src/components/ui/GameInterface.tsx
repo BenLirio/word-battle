@@ -10,8 +10,12 @@ import { useUserData } from "../../context/UserDataContext";
 import "./GameInterface.css";
 import { WordBattleFunctionName } from "word-battle-types";
 import BattleResultCard from "./BattleResultCard"; // Add this import
+import TranslatedWord from "./TranslatedWord";
+import { useTranslation } from "../../context/TranslationContext";
 
-const battle = async (req: BattleRequest): Promise<BattleResponse> => {
+const battle = async (
+  req: BattleRequest & { locale: string },
+): Promise<BattleResponse> => {
   const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
     funcName: WordBattleFunctionName.BATTLE,
     data: req,
@@ -27,6 +31,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
   onError,
 }) => {
   const { updatePlayer } = usePlayers();
+  const { language } = useTranslation();
   const {
     userData,
     fetchUserData,
@@ -48,7 +53,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
     setIsLoading(true); // Set loading state to true
 
     try {
-      const battleResult = await battle({ uuid });
+      const battleResult = await battle({ uuid, locale: language });
       setUserData(battleResult.userRecord);
       setBattleResult(battleResult);
 
@@ -85,7 +90,10 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
         <div className="mb-4">
           <p className="text-lg">Welcome, {userData.username}!</p>
           <p className="text-md">
-            Your battle word: <span className="font-bold">{userData.word}</span>
+            Your battle word:{" "}
+            <span className="font-bold">
+              <TranslatedWord record={userData} />
+            </span>
           </p>
           <p className="text-md">
             Current Rank:{" "}

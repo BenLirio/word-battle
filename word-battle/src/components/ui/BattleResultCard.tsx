@@ -1,9 +1,15 @@
 import React from "react";
 import { BattleResponse } from "word-battle-types/dist/battle";
 import { MdOutlineIosShare } from "react-icons/md";
+import TranslatedWord from "./TranslatedWord";
+import TranslatedText from "./TranslatedText";
+import { isDifferentText } from "../../localization/language";
 
 interface BattleResultCardProps {
-  battleResult: BattleResponse;
+  battleResult: BattleResponse & {
+    originalMessage?: string;
+    messageLanguage?: string;
+  };
 }
 
 const BattleResultCard: React.FC<BattleResultCardProps> = ({
@@ -32,20 +38,34 @@ const BattleResultCard: React.FC<BattleResultCardProps> = ({
       <h3 className="battle-result-title">Battle Result</h3>
       <p className="battle-result-text">
         <span className="battle-result-word">
-          {battleResult.userRecord.word}
+          <TranslatedWord record={battleResult.userRecord} />
         </span>{" "}
         vs{" "}
         <span className="battle-result-word">
-          {battleResult.otherUserRecord.word}
+          <TranslatedWord record={battleResult.otherUserRecord} />
         </span>
       </p>
       <p className="battle-result-text">
-        <em>{battleResult.message}</em>
+        <em>
+          {battleResult.originalMessage &&
+          isDifferentText(
+            battleResult.originalMessage,
+            battleResult.message,
+          ) ? (
+            <TranslatedText
+              original={battleResult.originalMessage}
+              translation={battleResult.message}
+              sourceLanguage={battleResult.messageLanguage}
+            />
+          ) : (
+            battleResult.message
+          )}
+        </em>
       </p>
       <p className="battle-result-text">
         Winner:{" "}
         <span className="battle-result-word">
-          {battleResult.winnerUserRecord.word}
+          <TranslatedWord record={battleResult.winnerUserRecord} />
         </span>
       </p>
       <p className="battle-result-text">
