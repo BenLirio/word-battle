@@ -41,6 +41,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
   } = useUserData();
   const [battleResult, setBattleResult] = useState<BattleResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false); // Add local isLoading state
+  const [battleError, setBattleError] = useState("");
 
   useEffect(() => {
     fetchUserData(uuid).catch(onError);
@@ -50,6 +51,7 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
     if (!userData) return;
 
     setBattleResult(null);
+    setBattleError("");
     setIsLoading(true); // Set loading state to true
 
     try {
@@ -65,12 +67,23 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
       });
     } catch (error) {
       console.error(error);
+      setBattleError(
+        (axios.isAxiosError(error) && error.response?.data?.error) ||
+          "The battle didn't go through. Try again.",
+      );
     } finally {
       setIsLoading(false); // Set loading state to false
     }
   };
 
   const handleTryAnotherWord = () => {
+    if (
+      !window.confirm(
+        "Start over with a new word? Your current word stays on the leaderboard, but you won't be able to play it again.",
+      )
+    ) {
+      return;
+    }
     Cookies.remove("battleGameUUID");
     window.location.reload();
   };
@@ -79,12 +92,6 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <button
-        onClick={handleTryAnotherWord}
-        className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 mb-4"
-      >
-        Restart (Try another word)
-      </button>
       <h2 className="text-2xl font-bold mb-4">word-battle.com</h2>
       {userData && (
         <div className="mb-4">
@@ -110,13 +117,23 @@ export const GameInterface: React.FC<GameInterfaceProps> = ({
         {isLoading || isUserDataLoading ? "Battling..." : "Start Battle"}
       </button>
 
-      {error && (
+      {(error || battleError) && (
         <Alert variant="destructive" className="mb-4">
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>{error || battleError}</AlertDescription>
         </Alert>
       )}
 
-      {battleResult && <BattleResultCard battleResult={battleResult} />}
+      {battleResult && (
+        <BattleResultCard
+          battleResult={battleResult}
+          onBattleAgain={handleBattle}
+          isBattling={isLoading}
+        />
+      )}
+
+      <button onClick={handleTryAnotherWord} className="restart-link">
+        Try another word
+      </button>
     </div>
   );
 };

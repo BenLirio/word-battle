@@ -17,8 +17,19 @@ const DESCRIPTION = `
 Submit words, challenge others, and watch AI pick winners in matchups like "Would lightning beat rock?" Jump in and see how your picks rank!
   `;
 
+// The server's filter messages quote its classifier; show players a short reason.
+const friendlyRegisterError = (message: string) => {
+  if (message.includes("detected as a prompt injection")) {
+    return "That reads like an instruction to the judge. Try a word or short phrase instead.";
+  }
+  if (message.includes("detected as racist")) {
+    return "That word isn't allowed. Try another one.";
+  }
+  return message;
+};
+
 const registerUser = async (
-  req: RegisterUserRequest
+  req: RegisterUserRequest,
 ): Promise<RegisterUserResponse> => {
   const res = await axios.post(`${PROTOCOL}://${DOMAIN}/dev/app`, {
     funcName: WordBattleFunctionName.REGISTER_USER,
@@ -64,7 +75,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       if (error instanceof AxiosError) {
         console.log(error);
         const errorMessage = error.response?.data?.error || "Unknown error";
-        setError(errorMessage);
+        setError(friendlyRegisterError(errorMessage));
       } else {
         setError("An unexpected error occurred");
       }
@@ -81,10 +92,16 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       </p>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div>
-          <label className={styles.label}>Username</label>
+          <label className={styles.label} htmlFor="username">
+            Username
+          </label>
           <input
+            id="username"
             type="text"
             className={styles.input}
+            minLength={3}
+            maxLength={20}
+            autoComplete="nickname"
             value={formData.username}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, username: e.target.value }))
@@ -93,25 +110,40 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
         </div>
         <div>
-          <label className={styles.label}>Battle Word</label>
+          <label className={styles.label} htmlFor="battle-word">
+            Battle Word
+          </label>
           <input
+            id="battle-word"
             type="text"
             className={styles.input}
+            minLength={3}
+            maxLength={50}
+            placeholder="e.g. lightning"
+            aria-describedby="battle-word-help"
+            autoComplete="off"
             value={formData.word}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, word: e.target.value }))
             }
             required
           />
+          <p id="battle-word-help" className={styles.help}>
+            <span>This word fights for you.</span>
+            <span>{formData.word.length}/50</span>
+          </p>
         </div>
         <div>
-          <label className={styles.label}>Leaderboard</label>
+          <label className={styles.label} htmlFor="leaderboard">
+            Leaderboard
+          </label>
           <select
+            id="leaderboard"
             className={styles.input}
             value={leaderboard || ""}
             onChange={(e) =>
               setLeaderboard(
-                e.target.value === "default" ? undefined : e.target.value
+                e.target.value === "default" ? undefined : e.target.value,
               )
             }
           >

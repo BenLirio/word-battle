@@ -16,6 +16,7 @@
 .battle-result-text {
   font-size: 1.125rem;
   margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
 }
 
 .battle-result-word {
@@ -32,4 +33,48 @@
 
 .elo-negative {
   color: #f44336; /* Red color for negative Rank change */
+}
+
+.battle-winner {
+  color: #4caf50;
+}
+
+.battle-loser {
+  opacity: 0.7;
+}
+
+.battle-result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.battle-result-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #f5f5f5;
+  background-color: #333;
+}
+
+.battle-result-actions button:disabled {
+  opacity: 0.5;
+}
+
+.battle-result-share-status {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #bbb;
+  overflow-wrap: anywhere;
+}
+
+.restart-link {
+  background: none !important;
+  border: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-decoration: underline;
 }

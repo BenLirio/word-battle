@@ -3,9 +3,27 @@ import { usePlayers } from "../../context/PlayersContext";
 import { useUserData } from "../../context/UserDataContext";
 import { UserRecord } from "word-battle-types";
 import styles from "./ScoreBoard.module.css";
+
 import TranslatedWord from "./TranslatedWord";
 
 const NUM_PLAYERS_BEFORE_AND_AFTER = 5;
+const PAGE_SIZE = 50;
+
+const PlayerRow: React.FC<{
+  player: UserRecord;
+  position: number;
+  isCurrentUser: boolean;
+}> = ({ player, position, isCurrentUser }) => (
+  <li className={`${styles.listItem} ${isCurrentUser ? styles.highlight : ""}`}>
+    <span className={styles.rank}>
+      #{position} <span className={styles.elo}>{Math.round(player.elo)}</span>
+    </span>
+    <span>
+      <TranslatedWord record={player} />
+    </span>
+    <span className={styles.username}>{player.username}</span>
+  </li>
+);
 
 const PlayerList: React.FC<{
   players: UserRecord[];
@@ -22,51 +40,44 @@ const PlayerList: React.FC<{
   endIndex,
   onlyScoreboard,
 }) => {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [from, to] = onlyScoreboard
+    ? [0, 10]
+    : showAllPlayers
+      ? [0, visibleCount]
+      : [startIndex, endIndex];
+  const nearby = !onlyScoreboard && !showAllPlayers;
+
   return (
-    <ul>
-      <li className={styles.listItem}>
-        <span>Rank</span>
-        <span>Word</span>
-        <span>Username</span>
-      </li>
-      {showAllPlayers || onlyScoreboard ? (
-        (onlyScoreboard ? players.slice(0, 10) : players).map((player, idx) => (
-          <li
-            key={idx}
-            className={`${styles.listItem} ${
-              player.uuid === userData?.uuid ? styles.highlight : ""
-            }`}
-          >
-            <span>{`#${idx + 1} (${Math.round(player.elo)})`}</span>
-            <span>
-              <TranslatedWord record={player} />
-            </span>
-            <span>({player.username})</span>
-          </li>
-        ))
-      ) : (
-        <>
-          {startIndex > 0 && <li className={styles.listItem}>...</li>}
-          {players.slice(startIndex, endIndex).map((player, idx) => (
-            <li
-              key={idx}
-              className={`${styles.listItem} ${
-                player.uuid === userData?.uuid ? styles.highlight : ""
-              }`}
-            >
-              <span>{Math.round(player.elo)}</span>
-              <span>
-                <TranslatedWord record={player} />
-              </span>
-              <span>({player.username})</span>
-            </li>
-          ))}
-          {endIndex < players.length && (
-            <li className={styles.listItem}>...</li>
-          )}
-        </>
+    <>
+      <ul>
+        <li className={`${styles.listItem} ${styles.header}`}>
+          <span>Rank</span>
+          <span>Word</span>
+          <span className={styles.username}>Player</span>
+        </li>
+        {nearby && from > 0 && <li className={styles.ellipsis}>…</li>}
+        {players.slice(from, to).map((player, idx) => (
+          <PlayerRow
+            key={player.uuid}
+            player={player}
+            position={from + idx + 1}
+            isCurrentUser={player.uuid === userData?.uuid}
+          />
+        ))}
+        {nearby && to < players.length && (
+          <li className={styles.ellipsis}>…</li>
+        )}
+      </ul>
+      {showAllPlayers && !onlyScoreboard && visibleCount < players.length && (
+        <button
+          className={styles.more}
+          onClick={() => setVisibleCount(visibleCount + PAGE_SIZE)}
+        >
+          Show more ({players.length - visibleCount} left)
+        </button>
       )}
-    </ul>
+    </>
   );
 };
 
@@ -117,7 +128,11 @@ const ScoreBoard: React.FC = () => {
   }, [players, userData]);
 
   if (players.length === 0) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.scoreboard} aria-busy="true">
+        <h2>Loading leaderboard…</h2>
+      </div>
+    );
   }
 
   const handleToggleShowAllPlayers = () => {

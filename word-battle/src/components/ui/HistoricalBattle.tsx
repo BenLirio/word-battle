@@ -6,6 +6,7 @@ import {
 import { DOMAIN, PROTOCOL } from "../../constants";
 import { WordBattleFunctionName } from "word-battle-types";
 import axios from "axios";
+import Cookies from "js-cookie";
 import BattleResultCard from "./BattleResultCard"; // Import the BattleResultCard component
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import { useTranslation } from "../../context/TranslationContext";
@@ -71,7 +72,11 @@ const HistoricalBattle: React.FC<HistoricalBattleProps> = ({
 
   return (
     <div>
-      <button onClick={handleBackClick}>Back</button>
+      <button onClick={handleBackClick}>
+        {Cookies.get("battleGameUUID")
+          ? "Back to your game"
+          : "Play Word Battle"}
+      </button>
       {battleResult && (
         <BattleResultCard battleResult={{ ...battleResult, timestamp }} />
       )}
